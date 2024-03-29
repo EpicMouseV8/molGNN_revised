@@ -1,6 +1,6 @@
 data/raw/*
-!data/raw/.gitkee
+!data/raw/.gitkeep
 data/processed/*
-!data/processed/.gitkee
+!data/processed/.gitkeep
 models/*
 visualizations/*
