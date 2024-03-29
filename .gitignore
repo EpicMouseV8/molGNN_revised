@@ -1,4 +1,4 @@
-raw/
-processed/
-models/
-visualizations/
+data/raw/*
+data/processed/*
+models/*
+visualizations/*

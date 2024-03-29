@@ -196,7 +196,7 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
 
     plot_losses(train_losses, val_losses, save_path='visualizations/'+target.replace(" ", "_")+'_losses.png')
 
-    model.load_state_dict(torch.load('model_es.pth'))
+    model.load_state_dict(torch.load(save_path + '/' + 'model_es.pth'))
     test_loss = test(model, test_loader, target, loss_fn)
     print(f"Test Loss: {test_loss}")
 
