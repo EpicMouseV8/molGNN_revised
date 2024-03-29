@@ -1,5 +1,5 @@
 data/raw/*
-!data/raw/.gitkeep
+!data/raw/.gitkee
 data/processed/*
 !data/processed/.gitkee
 models/*
