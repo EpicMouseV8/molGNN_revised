@@ -1,2 +1,4 @@
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+!models/.gitkeep
+!visualizations/.gitkeep
