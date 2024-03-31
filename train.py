@@ -149,13 +149,13 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
-    print("Training model...")
+    print("Training model on " + device.type + "...")
 
     train_losses = []
     val_losses = []
 
     best_val_loss = float('inf')
-    patience = 20
+    patience = 30
     epochs_without_improvement = 0
 
     for epoch in range(n_epochs):
