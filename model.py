@@ -19,27 +19,24 @@ class GNN_QY(torch.nn.Module):
     def forward(self, data, solvent_feature_dim=128):
         x, edge_index, edge_attr, batch, solvent_fingerprint = data.x, data.edge_index, data.edge_attr, data.batch, data.solvent_fingerprint
 
-        # TransformerConv processes
         x = self.transformer_conv1(x, edge_index, edge_attr)
         x = F.relu(self.bn1(x))
         x = self.transformer_conv2(x, edge_index, edge_attr)
         x = F.relu(self.bn2(x))
 
-        # Global mean pooling and global max pooling
-        x_gap = global_mean_pool(x, batch)  # Global Average Pooling
-        x_gmp = global_max_pool(x, batch)  # Global Max Pooling
+        # combination of global mean pooling and global max pooling
+        x_gap = global_mean_pool(x, batch)
+        x_gmp = global_max_pool(x, batch)  
+        x_combined = torch.cat([x_gap, x_gmp], dim=1) 
 
-        # Combine pooled features
-        x_combined = torch.cat([x_gap, x_gmp], dim=1)  # Concatenate GAP and GMP features
-
-        # Solvent features
+        # solvent features
         solvent_fingerprint = solvent_fingerprint.view(-1, solvent_feature_dim)
         solvent_features = F.relu(self.fc_solvent(solvent_fingerprint))
 
-        # Combine features from GNN and solvent
+        # gnn features + solvent fingerprint
         x = torch.cat([x_combined, solvent_features], dim=1)
 
-        # Apply batch normalization and dropout before final layers
+        # batchnorm and dropout
         x = self.dropout(F.relu(self.bn_fc1(self.fc1(x))))
         x = torch.sigmoid(self.fc2(x))
 

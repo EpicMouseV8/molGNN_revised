@@ -71,7 +71,6 @@ def train_epoch(model, train_loader, optimizer, loss_fn):
         loss = loss_fn(output, batch.y)
         loss.backward()
         optimizer.step()
-        
 
         total_loss += loss.item()
 
@@ -100,7 +99,7 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
 
     data = pd.read_csv('data/raw/'+dataset)
 
-    # data = data[:500]
+    data = data[:500]
 
     data = data.dropna(subset=[target])
 
@@ -156,7 +155,7 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
     val_losses = []
 
     best_val_loss = float('inf')
-    patience = 100
+    patience = 30
     epochs_without_improvement = 0
 
     for epoch in range(n_epochs):
@@ -166,9 +165,6 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
 
         train_losses.append(train_loss)
         val_losses.append(val_loss)
-        
-        if epoch % 50 == 0:
-            print(f"Epoch: {epoch}, Train Loss: {train_loss}, Val Loss: {val_loss}")
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
@@ -181,8 +177,21 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
             print(f"Early stopping after {epoch+1} epochs.")
             break
 
-        if epoch % 50 == 0:
+        if epoch % 10 == 0:
+            print(f"Epoch: {epoch}, Train Loss: {train_loss}, Val Loss: {val_loss}")
+
             torch.save(model.state_dict(), save_path + '/' + model_name + '_epoch_' + str(epoch) + '.pth')
+
+            loss_data = {
+                'train_loss': train_losses,
+                'val_loss': val_losses,
+            }
+
+            df_losses = pd.DataFrame(loss_data)
+
+            df_losses.to_csv(save_path + '/' + target.replace(" ", "_") + '_losses.csv', index=False)
+
+            # plot_losses(train_losses, val_losses, save_path='visualizations/'+target.replace(" ", "_")+'_losses.png')
 
     # saving loss values as a .csv
     loss_data = {
@@ -199,4 +208,3 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
     model.load_state_dict(torch.load(save_path + '/' + 'model_es.pth'))
     test_loss = test(model, test_loader, target, loss_fn)
     print(f"Test Loss: {test_loss}")
-

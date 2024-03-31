@@ -123,7 +123,5 @@ class MolDataset(Dataset):
         else:
             data = torch.load(os.path.join(self.processed_dir, 
                                  f'data_{idx}.pt'))   
-
-        # print(f"Graph {idx}: Node features shape: {data.x.shape}, Edge features shape: {data.edge_attr.shape}, Edge index shape: {data.edge_index.shape}")
      
         return data

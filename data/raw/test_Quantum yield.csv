@@ -1,0 +1,43 @@
+,Unnamed: 0,Chromophore,Solvent,Absorption max (nm),Emission max (nm),Lifetime (ns),Quantum yield,log(e/mol-1 dm3 cm-1),Reference,Tag
+0,434,CC(=O)Nc1ccc2c3cccc4cccc(c5cccc1c52)c43,C1COCCO1,447.0,471.0,,0.56,,doi:10.1016/j.dyepig.2008.12.009,435
+1,435,Clc1nc(Cl)nc(Nc2ccc3c4cccc5cccc(c6cccc2c63)c54)n1,C1COCCO1,446.0,472.0,,0.068,,doi:10.1016/j.dyepig.2008.12.009,436
+2,306,Cc1ccc2sc3cc(CCC(=O)O)ccc3c(=O)c2c1,CO,402.0,,2.55,0.12,3.758154622,https://doi.org/10.1016/0022-2313(92)90006-U,307
+3,282,CCN(CC)c1ccc2nc3c4ccccc4c(=O)cc-3oc2c1,CC1COC(=O)O1,,,4.4,0.72,,https://doi.org/10.1016/S0009-2614(02)00784-4,283
+4,496,C=CCOc1nnc(OCCC(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)F)nn1,ClCCl,526.0,572.0,63.4,0.16,2.716003344,http://dx.doi.org/10.1016/j.dyepig.2014.03.031,497
+5,305,Cc1ccc2sc3cc(CCC(=O)O)ccc3c(=O)c2c1,CCO,,,1.7,0.082,,https://doi.org/10.1016/0022-2313(92)90006-U,306
+6,432,c1ccc(Nc2nc(Nc3ccccc3)nc(Nc3ccc4c5cccc6cccc(c7cccc3c74)c65)n2)cc1,CCCCOCCCC,444.0,486.0,,0.5,,doi:10.1016/j.dyepig.2008.12.009,433
+7,43,O=C([O-])c1ccccc1C1=c2cc3c4c(c2Oc2c1cc1c5c2CCCN5CCC1)CCC[N+]=4CCC3,CO,,,4.59,1.0,,https://doi.org/10.1111/j.1751-1097.1999.tb08277.x,44
+8,450,COc1nc(Cl)nc(Nc2ccc3c4cccc5cccc(c6cccc2c63)c54)n1,CC#N,444.0,482.0,,0.32,,doi:10.1016/j.dyepig.2008.12.009,451
+9,427,CC(=O)Nc1ccc2c3cccc4cccc(c5cccc1c52)c43,CCCCOCCCC,453.0,471.0,,0.46,,doi:10.1016/j.dyepig.2008.12.009,428
+10,301,O=c1c2ccccc2sc2ccccc12,CO,378.0,,4.8,0.25,3.763427994,https://doi.org/10.1016/0022-2313(92)90006-U,302
+11,373,Cc1ccc(N(c2ccc(C)cc2)c2ccc(-c3ccc4c(c3)C(=O)c3ccccc3C4=O)cc2)cc1,CCOC(C)=O,461.0,,,0.0,,http://dx.doi.org/10.1016/j.dyepig.2017.05.024,374
+12,388,CC1=CC(C)=[N+]2C1=C(c1ccccc1)c1c(C)cc(C)n1[B-]2(F)F,CO,497.75,509.75,3.9,0.5966666666666667,4.944482672,"https://doi.org/10.1016/j.dyepig.2019.01.019, https://doi.org/10.1007/s10895-019-02349-5, https://doi.org/10.1021/jo202215x, DOI: 10.1021/ol202379w",389
+13,75,O=C([O-])c1ccccc1-c1c2cc(I)c(=O)c(I)c-2oc2c(I)c([O-])c(I)cc12,CO,526.0,545.0,0.5,0.08,,doi/10.1021/ja00455a017,76
+14,440,Nc1ccc2c3cccc4cccc(c5cccc1c52)c43,CCOC(C)=O,463.0,555.0,5.1,0.2,,doi:10.1016/j.dyepig.2008.12.009,441
+15,431,Clc1nc(Nc2ccccc2)nc(Nc2ccc3c4cccc5cccc(c6cccc2c63)c54)n1,CCCCOCCCC,443.0,476.0,,0.49,,doi:10.1016/j.dyepig.2008.12.009,432
+16,78,O=C([O-])c1ccccc1-c1c2cc(I)c(=O)c(I)c-2oc2c(I)c([O-])c(I)cc12,CCO,532.0,551.0,0.565,0.08,,doi/10.1021/ja00455a017,79
+17,413,C(/C=C/c1ccc(-n2c3ccccc3c3ccccc32)cc1)=C\c1ccncc1,CO,353.0,496.0,,0.02,,http://dx.doi.org/10.1016/j.dyepig.2015.08.018,414
+18,443,COc1nc(Cl)nc(Nc2ccc3c4cccc5cccc(c6cccc2c63)c54)n1,CCOC(C)=O,442.0,477.0,3.5,0.33,,doi:10.1016/j.dyepig.2008.12.009,444
+19,71,O=C([O-])c1ccccc1-c1c2cc(Br)c(=O)c(Br)c-2oc2c(Br)c([O-])c(Br)cc12,O,515.0,538.0,1.425,0.2,,doi/10.1021/ja00455a017,72
+20,90,CCC(=O)c1ccc2cc(N(C)C)ccc2c1,O,362.0,529.0,2.1,0.19,,"doi/10.1021/bi00581a025, 10.1002/anie.201909536, 0006-2960/79/0418-30",91
+21,160,CC(=O)N(Cc1ccccn1)c1c2ccccc2c2c3c(cccc13)C(=O)N(Cc1ccccn1)C2=O,C1CCOC1,436.0,497.0,,0.36,4.075546961,"https://doi.org/10.1016/j.dyepig.2016.11.056, http://dx.doi.org/10.1016/j.dyepig.2016.11.056",161
+22,370,Cc1ccc(N(c2ccc(C)cc2)c2ccc(-c3ccc4c(c3)C(=O)c3ccccc3C4=O)cc2)cc1,Cc1ccccc1,470.0,635.0,5.75,0.0801,,http://dx.doi.org/10.1016/j.dyepig.2017.05.024,371
+23,81,O=C([O-])c1ccccc1-c1c2cc(I)c(=O)c(I)c-2oc2c(I)c([O-])c(I)cc12,CC(C)O,532.0,557.0,0.66,0.1,,doi/10.1021/ja00455a017,82
+24,150,O=C1c2cccc3c(NCc4ccccn4)c4ccccc4c(c23)C(=O)N1Cc1ccccn1,Cc1ccccc1,517.0,606.0,,0.08,4.071882007,"https://doi.org/10.1016/j.dyepig.2016.11.056, http://dx.doi.org/10.1016/j.dyepig.2016.11.056",151
+25,447,Nc1ccc2c3cccc4cccc(c5cccc1c52)c43,CC#N,467.0,569.5,5.5,0.325,,"doi:10.1016/j.dyepig.2008.12.009, https://doi.org/10.1016/j.cplett.2010.01.066",448
+26,146,O=C1c2cccc3cc4ccccc4c(c23)C(=O)N1Cc1ccccn1,Cc1ccccc1,435.0,483.0,,0.69,3.977723605,"https://doi.org/10.1016/j.dyepig.2016.11.056, http://dx.doi.org/10.1016/j.dyepig.2016.11.056",147
+27,402,COc1cccc(OC)c1C1=C2C(C)=CC(C)=[N+]2[B-](F)(F)n2c(C)cc(C)c21,CO,503.0,518.0,,0.58,,https://doi.org/10.1016/j.dyepig.2019.01.019,403
+28,468,CCOC(=O)CN1C(=O)C2=C(c3ccc(C#N)cc3)N(CC(=O)OCC)C(=O)C2=C1c1ccc(C#N)cc1,CC#N,473.0,549.0,6.67,0.32,4.28780173,doi:10.1016/j.dyepig.2011.05.004,469
+29,283,CCN(CC)c1ccc2nc3c4ccccc4c(=O)cc-3oc2c1,CCCCCCCCCCO,,,4.19,0.64,,https://doi.org/10.1016/S0009-2614(02)00784-4,284
+30,199,c1ccc(-c2c3ccccc3c(-c3ccccc3)c3ccccc23)cc1,C1CCCCC1,296.0,366.0,7.6,0.97,,"10.1021/ac062160k, DOI: 10.1021/jo302621k, Fluorophores",200
+31,111,CCCCCCCCCCCCn1cccc1/C=C/c1cc(OCCCC)c(/C=C/c2cccn2CCCCCCCCCCCC)cc1OCCCC,Cc1ccccc1,411.0,472.0,1.26,0.4,,https://doi.org/10.1016/S0040-4039(00)01039-X,112
+32,469,CCOC(=O)CN1C(=O)C2=C(c3ccc(N4CCCCC4)cc3)N(CC(=O)OCC)C(=O)C2=C1c1ccccc1,CC#N,500.0,587.0,2.7,0.01,4.549003262,doi:10.1016/j.dyepig.2011.05.004,470
+33,452,Clc1nc(Nc2ccccc2)nc(Nc2ccc3c4cccc5cccc(c6cccc2c63)c54)n1,CC#N,442.0,477.0,,0.45,,doi:10.1016/j.dyepig.2008.12.009,453
+34,363,O=C1c2ccccc2C(=O)c2cc(-c3ccc(N(c4ccccc4)c4ccccc4)cc3)ccc21,Cc1ccccc1,454.0,615.0,6.79,0.092,,http://dx.doi.org/10.1016/j.dyepig.2017.05.024,364
+35,367,O=C1c2ccccc2C(=O)c2cc(-c3ccc(N(c4ccccc4)c4ccccc4)cc3)ccc21,ClCCl,459.0,,,0.0,,http://dx.doi.org/10.1016/j.dyepig.2017.05.024,368
+36,178,CN(C)c1ccc2cc3ccc(N(C)C)cc3nc2c1,O,496.5,529.0,2.0,0.21,,"http://www.iss.com/resources/research/technical_notes/K2CH_FLT.html, 10.1002/anie.201901061",179
+37,141,O=C1c2cccc3cc4ccccc4c(c23)C(=O)N1Cc1ccccn1,CCO,436.0,500.0,15.18,0.91,3.982271233,"https://doi.org/10.1016/j.dyepig.2016.11.056, http://dx.doi.org/10.1016/j.dyepig.2016.11.056",142
+38,390,COc1ccccc1C1=C2C(C)=CC(C)=[N+]2[B-](F)(F)n2c(C)cc(C)c21,CC(C)=O,501.0,513.0,,0.78,,https://doi.org/10.1016/j.dyepig.2019.01.019,391
+39,124,ClP1(Cl)=N[P@@](Cl)(Oc2ccc3ccc4cccc5ccc2c3c45)=N[P@@](Cl)(Oc2ccc3ccc4cccc5ccc2c3c45)=N1,ClCCl,343.0,455.0,2.017,0.7,4.760874638,https://doi.org/10.1016/j.dyepig.2018.02.012,125
+40,488,COCCOCCOCCNc1cc2c3c(c(NCCOCCOCCOC)cc4c3c1C(=O)N(CCOCCOCCOC)C4=O)C(=O)N(CCOCCOCCOC)C2=O,O,623.0,655.0,4.4,0.039,,http://dx.doi.org/10.1016/j.dyepig.2014.07.018,489
+41,493,C=CCOc1nnc(OCCC(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)F)nn1,OCC(F)(F)F,512.0,562.0,8.7,0.01,,http://dx.doi.org/10.1016/j.dyepig.2014.03.031,494
