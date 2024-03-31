@@ -99,7 +99,7 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
 
     data = pd.read_csv('data/raw/'+dataset)
 
-    # data = data[:500]
+    data = data[:500]
 
     data = data.dropna(subset=[target])
 
