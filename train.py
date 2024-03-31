@@ -155,7 +155,7 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
     val_losses = []
 
     best_val_loss = float('inf')
-    patience = 30
+    patience = 20
     epochs_without_improvement = 0
 
     for epoch in range(n_epochs):
