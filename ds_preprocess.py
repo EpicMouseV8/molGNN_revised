@@ -1,4 +1,4 @@
-from torch_geometric.data import Dataset
+from torch_geometric.data import Dataset, InMemoryDataset
 import numpy as np 
 import pandas as pd
 import torch
@@ -9,6 +9,89 @@ from rdkit.Chem import AllChem
 import os
 from tqdm import tqdm
 import logging
+
+def preprocess(df, target_column):
+    print("Preprocessing data...")
+
+    df = df.dropna(subset=target_column)
+
+    chromophores = df['Chromophore'].to_numpy()
+    solvents = df['Solvent'].to_numpy()
+    target = df[target_column].to_numpy()
+
+    print("Data preprocessed.")
+
+    return chromophores, solvents, target
+
+def featurize(chromophores, solvents, target, save_filename):
+    
+    data = []
+
+    save_dir = 'data/processed/list/' + save_filename
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    all_files_exist = True
+    for i in range(len(chromophores)):
+        save_path = os.path.join(save_dir, f'graph_{i}.pt')
+        if not os.path.isfile(save_path):
+            all_files_exist = False
+            break
+        else:
+            graph = torch.load(save_path)
+            data.append(graph)
+
+    if all_files_exist:
+        print("Loaded preprocessed graphs from disk.")
+
+        for graph in data:
+            graph.edge_index = graph.edge_index.t()
+
+        return data
+
+
+    print("Featurizing data...")
+    featurizer = dc.feat.MolGraphConvFeaturizer(use_edges=True)
+    features = featurizer.featurize(chromophores)
+
+    print("Data featurized.")
+
+    print("Creating graph data...")
+
+    for i, feat in enumerate(features):
+        node_features = torch.tensor(feat.node_features, dtype=torch.float)
+        edge_features = torch.tensor(feat.edge_features, dtype=torch.float)
+        edge_index = torch.tensor(feat.edge_index, dtype=torch.long)
+
+        chromo_smiles = chromophores[i]
+        solvent_smiles = solvents[i]
+        solvent_mol = Chem.MolFromSmiles(solvent_smiles)
+        solvent_fingerprint = AllChem.GetMorganFingerprintAsBitVect(solvent_mol, radius=2, nBits=128)
+        solvent_fingerprint = torch.tensor((solvent_fingerprint), dtype=torch.float)
+
+        # y = torch.tensor([targets[i]], dtype=torch.float)
+
+        graph = torch_geometric.data.Data(x=node_features, solvent_fingerprint = solvent_fingerprint, edge_index=edge_index.t().contiguous(), edge_attr=edge_features, 
+                     chromo_smiles=chromo_smiles, solvent_smiles = solvent_smiles,  y=torch.tensor(target[i], dtype=torch.float))
+        data.append(graph)
+
+        # Save each graph object to a file
+        save_path = os.path.join(save_dir, f'graph_{i}.pt')
+        torch.save(graph, save_path)
+
+    for graph in data:
+        graph.edge_index = graph.edge_index.t()
+
+    return data
+
+def good_old_way_of_doing_things(file_name, target_column):
+    path = 'data/raw/' + file_name
+    df = pd.read_csv(path)
+    # df = df[:500]
+    chromophores, solvents, target = preprocess(df, target_column)
+    data = featurize(chromophores, solvents, target, save_filename=target_column.replace(" ", "_"))
+
+    return data
 
 
 class MolDataset(Dataset):

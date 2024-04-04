@@ -3,7 +3,7 @@ import numpy as np
 from torch.optim import Adam
 from torch.nn import MSELoss
 from torch_geometric.loader import DataLoader
-from ds_preprocess import MolDataset
+from ds_preprocess import MolDataset, good_old_way_of_doing_things
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from model import GNN_QY
@@ -24,11 +24,13 @@ def test(model, test_loader, target, loss_fn):
     labels = []
     preds = []
     total_loss = 0.0
+    num_targets = 1
 
     with torch.no_grad():
         for batch in test_loader:
             batch.to(device)
             pred = model(batch, solvent_feature_dim=128)
+            batch.y = batch.y.view(-1, num_targets)
             loss = loss_fn(pred, batch.y.float())
             total_loss += loss.item()
 
@@ -61,14 +63,17 @@ def train_epoch(model, train_loader, optimizer, loss_fn):
     for batch in train_loader:
         #data to GPU
         batch.to(device)
-        #resetting gradients
-        optimizer.zero_grad()
+        
         #passing data through model
         output = model(batch, solvent_feature_dim=128)
         #reshaping in case of multiple targets
         batch.y = batch.y.view(-1, num_targets) # Reshape targets to match output shape
         #computing loss and backpropagating
         loss = loss_fn(output, batch.y)
+
+        #resetting gradients
+        optimizer.zero_grad()
+
         loss.backward()
         optimizer.step()
 
@@ -97,45 +102,59 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
 
     print("Loading data...")
 
-    data = pd.read_csv('data/raw/'+dataset)
+    # data = pd.read_csv('data/raw/'+dataset)
 
     # data = data[:500]
 
-    data = data.dropna(subset=[target])
+    # data = data.dropna(subset=[target])
 
-    data_train, data_test_val = train_test_split(data, test_size= 1 - train_ratio, random_state=0)
+    all_data = good_old_way_of_doing_things(dataset, target)
+
+    data_train, data_test_val = train_test_split(all_data, test_size= 1 - train_ratio, random_state=0)
     data_test, data_val = train_test_split(data_test_val, test_size=test_ratio/(test_ratio + validation_ratio), random_state=0)
 
-    data_train = data_train.reset_index(drop=True)
-    data_test = data_test.reset_index(drop=True)
-    data_val = data_val.reset_index(drop=True)
+    print("train size: ", len(data_train))
+    print("test size: ", len(data_test))
+    print("val size: ", len(data_val))
 
-    data_train.to_csv('data/raw/train_'+target+'.csv', index=True)
-    data_val.to_csv('data/raw/val_'+target+'.csv', index=True)
-    data_test.to_csv('data/raw/test_'+target+'.csv', index=True)
+    # Uncomment to use pt custom dataset
+    # data_train = data_train.reset_index(drop=True)
+    # data_test = data_test.reset_index(drop=True)
+    # data_val = data_val.reset_index(drop=True)
 
-    print(data_train.index)
+    # Uncomment to use pytorch custom dataset
+    # data_train.to_csv('data/raw/train_'+target+'.csv', index=True)
+    # data_val.to_csv('data/raw/val_'+target+'.csv', index=True)
+    # data_test.to_csv('data/raw/test_'+target+'.csv', index=True)
 
-    train_ds = MolDataset(root = "data/", filename="train_"+target+".csv", mode='train')
-    val_ds = MolDataset(root = "data/", filename="val_"+target+".csv", mode='val')
-    test_ds = MolDataset(root = "data/", filename="test_"+target+".csv", mode='test')
+    # print(data_train.index)
 
-    print("Data loaded.")
-    print("Number of training samples: ", len(train_ds))
-    print("Number of test samples: ", len(test_ds))
+    # Uncomment to use pytorch custom dataset     
+    # train_ds = MolDataset(root = "data/", filename="train_"+target+".csv", mode='train')
+    # val_ds = MolDataset(root = "data/", filename="val_"+target+".csv", mode='val')
+    # test_ds = MolDataset(root = "data/", filename="test_"+target+".csv", mode='test')
+
+    # print("Data loaded.")
+    # print("Number of training samples: ", len(train_ds))
+    # print("Number of test samples: ", len(test_ds))
 
     # print(train_ds[0])
 
     print("Creating data loaders...")
 
-    train_loader = DataLoader(train_ds, batch_size=bz, shuffle=True)
-    val_loader = DataLoader(val_ds, batch_size=bz, shuffle=False)
-    test_loader = DataLoader(test_ds, batch_size=bz, shuffle=False)
+    # Uncomment to use pytorch custom dataset
+    # train_loader = DataLoader(train_ds, batch_size=bz, shuffle=True)
+    # val_loader = DataLoader(val_ds, batch_size=bz, shuffle=False)
+    # test_loader = DataLoader(test_ds, batch_size=bz, shuffle=False)
+
+    train_loader = DataLoader(data_train, batch_size=bz, shuffle=True)
+    val_loader = DataLoader(data_val, batch_size=bz, shuffle=False)
+    test_loader = DataLoader(data_test, batch_size=bz, shuffle=False)
 
     print("Data loaders created.")
 
-    node_feature_dim = train_ds.num_node_features
-    edge_feature_dim = train_ds.num_edge_features
+    node_feature_dim = all_data[0].num_node_features
+    edge_feature_dim = all_data[0].num_edge_features
 
 
     model = GNN_QY(node_feature_dim=node_feature_dim, edge_feature_dim=edge_feature_dim, solvent_feature_dim=128, output_dim=1, dropout_rate=0.3).to(device)
@@ -155,7 +174,7 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
     val_losses = []
 
     best_val_loss = float('inf')
-    patience = 30
+    patience = 200
     epochs_without_improvement = 0
 
     for epoch in range(n_epochs):
@@ -191,7 +210,7 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
 
             df_losses.to_csv(save_path + '/' + target.replace(" ", "_") + '_losses.csv', index=False)
 
-            # plot_losses(train_losses, val_losses, save_path='visualizations/'+target.replace(" ", "_")+'_losses.png')
+            plot_losses(train_losses, val_losses, save_path='visualizations/'+target.replace(" ", "_")+'_losses.png')
 
     # saving loss values as a .csv
     loss_data = {
@@ -208,3 +227,31 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
     model.load_state_dict(torch.load(save_path + '/' + 'model_es.pth'))
     test_loss = test(model, test_loader, target, loss_fn)
     print(f"Test Loss: {test_loss}")
+
+
+def test_existing_model(model_path = 'models/Quantum_yield/model_Quantum_yield_epoch_300.pth', dataset = 'prep2.csv', target='Quantum yield', bz = 32):
+
+    print("Loading data...")
+
+    test_ds = MolDataset(root = "data/", filename="test_"+target+".csv", mode='test')
+
+    print("Number of test samples: ", len(test_ds))
+
+    print("Creating data loaders...")
+
+    test_loader = DataLoader(test_ds, batch_size=bz, shuffle=False)
+
+    print("Data loaders created.")
+
+    node_feature_dim = test_ds.num_node_features
+    edge_feature_dim = test_ds.num_edge_features
+
+    model = GNN_QY(node_feature_dim=node_feature_dim, edge_feature_dim=edge_feature_dim, solvent_feature_dim=128, output_dim=1, dropout_rate=0.3).to(device)
+
+    loss_fn = MSELoss()
+
+    model.load_state_dict(torch.load(model_path))
+
+    print("Testing model on " + device.type + "...")
+
+    test_loss = test(model, test_loader, target, loss_fn)
