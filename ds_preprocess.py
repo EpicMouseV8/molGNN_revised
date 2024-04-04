@@ -87,7 +87,7 @@ def featurize(chromophores, solvents, target, save_filename):
 def good_old_way_of_doing_things(file_name, target_column):
     path = 'data/raw/' + file_name
     df = pd.read_csv(path)
-    # df = df[:500]
+    df = df[:500]
     chromophores, solvents, target = preprocess(df, target_column)
     data = featurize(chromophores, solvents, target, save_filename=target_column.replace(" ", "_"))
 

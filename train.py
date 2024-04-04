@@ -210,7 +210,7 @@ def run_training(model_path=None, dataset = 'prep2.csv', target='Quantum yield',
 
             df_losses.to_csv(save_path + '/' + target.replace(" ", "_") + '_losses.csv', index=False)
 
-            plot_losses(train_losses, val_losses, save_path='visualizations/'+target.replace(" ", "_")+'_losses.png')
+            # plot_losses(train_losses, val_losses, save_path='visualizations/'+target.replace(" ", "_")+'_losses.png')
 
     # saving loss values as a .csv
     loss_data = {
