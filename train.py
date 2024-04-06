@@ -3,7 +3,7 @@ import numpy as np
 from torch.optim import Adam
 from torch.nn import MSELoss
 from torch_geometric.loader import DataLoader
-from ds_preprocess import MolDataset, good_old_way_of_doing_things
+from ds_preprocess import MolDataset, good_old_way_of_doing_things, featurize_impute, featurize
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from model import GNN_QY
@@ -13,6 +13,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 
 train_ratio = 0.70
 validation_ratio = 0.15
@@ -255,3 +256,111 @@ def test_existing_model(model_path = 'models/Quantum_yield/model_Quantum_yield_e
     print("Testing model on " + device.type + "...")
 
     test_loss = test(model, test_loader, target, loss_fn)
+
+
+def impute_missing_values(dataset='prep2.csv', target='Quantum yield', bz = 32, model = None):
+        
+    data = pd.read_csv('data/raw/'+dataset)
+
+    data = data[data[target].isna()]
+
+    # data = data[:100]
+
+    chromophores = data['Chromophore'].to_numpy()
+    solvents = data['Solvent'].to_numpy()
+
+    imputed_graphs = featurize_impute(chromophores, solvents, save_filename=target.replace(" ", "_"))
+
+    imputed_loader = DataLoader(imputed_graphs, batch_size=bz, shuffle=False)
+
+    node_feature_dim = imputed_graphs[0].num_node_features
+    edge_feature_dim = imputed_graphs[0].num_edge_features
+
+    if model is None:
+        model = GNN_QY(node_feature_dim=node_feature_dim, edge_feature_dim=edge_feature_dim, solvent_feature_dim=128, output_dim=1, dropout_rate=0.3).to(device)
+
+        model.load_state_dict(torch.load('models/'+target.replace(" ", "_")+'/model_Quantum_yield_epoch_5970.pth'))
+
+    model.to(device)
+    model.eval()
+    preds = []
+    with torch.no_grad():
+        for batch in imputed_loader:
+            batch.to(device)
+            pred = model(batch, solvent_feature_dim=128)
+            preds.append(pred.cpu().numpy())
+
+    preds = np.concatenate(preds)
+
+    data[target] = preds
+
+    data.to_csv('data/raw/imputed_'+target.replace(" ", "_"), index=False)
+    
+def train_on_imputed(target='Quantum yield', bz = 32, model = None):
+
+    # val_data = val_data[:100]
+
+    
+    # Uncomment to use pytorch custom dataset     
+    train_ds = MolDataset(root = "data/", filename="train_imputed.csv", mode='train')
+    val_ds = MolDataset(root = "data/", filename="val_"+target+".csv", mode='val')
+
+    print("Data loaded.")
+    print("Number of training samples: ", len(train_ds))
+    print("Number of val samples: ", len(val_ds))
+
+    train_loader = DataLoader(train_ds, batch_size=bz, num_workers = 1, shuffle=True)
+    val_loader = DataLoader(val_ds, batch_size=bz, shuffle=False)
+
+    node_feature_dim = train_ds.num_node_features
+    edge_feature_dim = train_ds.num_edge_features
+
+
+
+    if model is None:
+        model = GNN_QY(node_feature_dim=node_feature_dim, edge_feature_dim=edge_feature_dim, solvent_feature_dim=128, output_dim=1, dropout_rate=0.3).to(device)
+
+    optimizer = Adam(model.parameters(), lr=0.001)
+    loss_fn = MSELoss()
+
+    save_path = 'models/imputed/'+ target.replace(" ", "_")
+
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    print("Training model on " + device.type + "...")
+    train_losses = []
+    val_losses = []
+
+    best_val_loss = float('inf')
+
+    for epoch in range(300):
+        model.train()
+        train_loss = train_epoch(model, train_loader, optimizer, loss_fn)
+        val_loss = eval_model(model, val_loader, loss_fn)
+
+        train_losses.append(train_loss)
+        val_losses.append(val_loss)
+
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model.state_dict(), save_path + '/' + 'model_es.pth')
+
+        if epoch % 10 == 0:
+            print(f"Epoch: {epoch}, Train Loss: {train_loss}, Val Loss: {val_loss}")
+
+            torch.save(model.state_dict(), save_path + '/' + 'model_epoch_' + str(epoch) + '.pth')
+
+            loss_data = {
+                'train_loss': train_losses,
+                'val_loss': val_losses,
+            }
+
+            df_losses = pd.DataFrame(loss_data)
+
+            df_losses.to_csv(save_path + '/' + target.replace(" ", "_") + '_losses.csv', index=False)
+
+            # plot_losses(train_losses, val_losses, save_path='visualizations/'+target.replace(" ", "_")+'_losses.png')
+
+
+    

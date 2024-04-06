@@ -23,6 +23,67 @@ def preprocess(df, target_column):
 
     return chromophores, solvents, target
 
+def featurize_impute(chromophores, solvents, save_filename):
+    
+    data = []
+
+    save_dir = 'data/processed/imputed/' + save_filename
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    all_files_exist = True
+    for i in range(len(chromophores)):
+        save_path = os.path.join(save_dir, f'graph_{i}.pt')
+        if not os.path.isfile(save_path):
+            all_files_exist = False
+            break
+        else:
+            graph = torch.load(save_path)
+            data.append(graph)
+
+    if all_files_exist:
+        print("Loaded preprocessed graphs from disk.")
+
+        for graph in data:
+            graph.edge_index = graph.edge_index.t()
+
+        return data
+
+
+    print("Featurizing data...")
+    featurizer = dc.feat.MolGraphConvFeaturizer(use_edges=True)
+    features = featurizer.featurize(chromophores)
+
+    print("Data featurized.")
+
+    print("Creating graph data...")
+
+    for i, feat in enumerate(features):
+        node_features = torch.tensor(feat.node_features, dtype=torch.float)
+        edge_features = torch.tensor(feat.edge_features, dtype=torch.float)
+        edge_index = torch.tensor(feat.edge_index, dtype=torch.long)
+
+        chromo_smiles = chromophores[i]
+        solvent_smiles = solvents[i]
+        solvent_mol = Chem.MolFromSmiles(solvent_smiles)
+        solvent_fingerprint = AllChem.GetMorganFingerprintAsBitVect(solvent_mol, radius=2, nBits=128)
+        solvent_fingerprint = torch.tensor((solvent_fingerprint), dtype=torch.float)
+
+        # y = torch.tensor([targets[i]], dtype=torch.float)
+
+        graph = torch_geometric.data.Data(x=node_features, solvent_fingerprint = solvent_fingerprint, edge_index=edge_index.t().contiguous(), edge_attr=edge_features, 
+                     chromo_smiles=chromo_smiles, solvent_smiles = solvent_smiles)
+        data.append(graph)
+
+        # Save each graph object to a file
+        save_path = os.path.join(save_dir, f'graph_{i}.pt')
+        torch.save(graph, save_path)
+
+    for graph in data:
+        graph.edge_index = graph.edge_index.t()
+
+    return data
+
 def featurize(chromophores, solvents, target, save_filename):
     
     data = []
